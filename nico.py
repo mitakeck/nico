@@ -28,7 +28,7 @@ def db_connection(db, user, passwd):
 		connection:
 		cursor:
 	"""
-	connection = MySQLdb.connect(db = "nico", user = "root", passwd = "admin");
+	connection = MySQLdb.connect(db = db, user = user, passwd = passwd);
 	cursor = connection.cursor();
 
 	return connection, cursor;
@@ -62,7 +62,17 @@ def db_create_table(connection, cursor, tablename):
 		テーブル名
 	"""
 	tablename = tablename.split(".")[0];
-	sql = "CREATE TABLE %s ( id int(17) NOT NULL AUTO_INCREMENT, comment varchar(255) NOT NULL, command varchar(255) , vpos int(17) NOT NULL, no int(17) NOT NULL, date int(17) NOT NULL,PRIMARY KEY (id));" % (e(tablename));
+	sql = """
+            CREATE TABLE %s 
+            ( 
+                id int(17) NOT NULL AUTO_INCREMENT,
+                comment varchar(255) NOT NULL, 
+                command varchar(255) , 
+                vpos int(17) NOT NULL, 
+                no int(17) NOT NULL, 
+                date int(17) NOT NULL,PRIMARY KEY (id)
+            );
+            """ % (e(tablename));
 	cursor.execute(sql);
 	connection.commit();
 	return tablename;
@@ -78,7 +88,10 @@ def db_is_exist_table(connection, cursor, tablename):
 		-1: 存在する
 	"""
 	tablename = tablename.split(".")[0];
-	sql = "select * from INFORMATION_SCHEMA.TABLES where TABLE_NAME = '%s';" % (e(tablename));
+	sql = """
+            SELECT * FROM INFORMATION_SCHEMA.TABLES 
+            where TABLE_NAME = '%s';
+            """ % (e(tablename));
 	cursor.execute(sql);
 	result = cursor.fetchall();
 	if(len(result) == 0):
@@ -88,7 +101,10 @@ def db_is_exist_table(connection, cursor, tablename):
 
 def db_insert_data(connection, cursor, tablename, data):
 	if db_is_exist_table(connection, cursor, tablename):
- 		query = "INSERT INTO %s (command, comment, no, vpos, date) VALUES ('%s', '%s', '%s', '%s', '%s');" % ( e(tablename), e(data["command"]), e(data["comment"]), data["no"], data["vpos"], data["date"] );
+ 		query = """
+                    INSERT INTO %s ( command, comment, no, vpos, date )
+                    VALUES ('%s', '%s', '%s', '%s', '%s');
+                    """ % ( e(tablename), e(data["command"]), e(data["comment"]), data["no"], data["vpos"], data["date"] );
 		cursor.ececute(sql);
 	else:
 		print "table not exists.";
@@ -117,7 +133,11 @@ def get_comment_where_nearly_vpos(connection, cursor, tablename, vpos, offset):
 	"""
 	start_vpos = max(0, vpos-offset);
 	end_vpos = vpos + offset;
-	sql = "SELECT * FROM %s WHERE vpos between '%s' AND '%s';" % (e(tablename), start_vpos, end_vpos);
+	sql = """
+            SELECT * FROM %s 
+            WHERE vpos 
+            BETWEEN '%s' AND '%s';
+            """ % (e(tablename), start_vpos, end_vpos);
 	cursor.execute(sql);
 	result = cursor.fetchall();
 	return result;
