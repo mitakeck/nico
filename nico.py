@@ -4,6 +4,9 @@ import json
 import MySQLdb
 import os
 import MeCab
+import matplotlib
+matplotlib.use('Agg')
+import pylab
 
 
 def e(s):
@@ -167,5 +170,9 @@ if __name__ == "__main__":
 	for w, c in sorted(word.items(), key=lambda x:x[1]):
 		print w;
 		print c;
+
+	
+	matplotlib.pyplot.plot(word);
+	matplotlib.pyplot.savefig('word.png');
 
  	db_disconnection(connection, cursor);
