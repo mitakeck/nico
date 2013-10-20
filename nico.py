@@ -90,7 +90,7 @@ def db_is_exist_table(connection, cursor, tablename):
 	tablename = tablename.split(".")[0];
 	sql = """
             SELECT * FROM INFORMATION_SCHEMA.TABLES 
-            where TABLE_NAME = '%s';
+            WHERE TABLE_NAME = '%s';
             """ % (e(tablename));
 	cursor.execute(sql);
 	result = cursor.fetchall();
@@ -168,31 +168,4 @@ if __name__ == "__main__":
 		print w;
 		print c;
 
-#	if db_is_exist_table(connection, cursor, "testtable"):
-#		print "t";
-#	else:
-#		print "f";
-#		tablename = db_create_table(connection, cursor, "testtable");
-
- 	# for filename in os.listdir('/root/nico/1924/'):
- 	# 	print filename;
- 	# 	file = open('/root/nico/1924/'+filename, 'rt');
-	# 	tablename = parse_table_name(filename);
-	# 	if not db_is_exist_table(connection, cursor, tablename):
-	# 		db_create_table(connection, cursor, tablename);
- 	# 	
- 	# 	for line in file:
- 	# 		json_data = json.loads(line);
- 	# 		query = "insert into %s (command, comment, no, vpos, date) values ('%s', '%s', '%s', '%s', '%s');" % ( e(tablename), e(json_data["command"]), e(json_data["comment"]), json_data["no"], json_data["vpos"], json_data["date"] );
- 	# 		cursor.execute(query);
- 	# 	
- 	# 	cursor.execute("select * from " + tablename + ";");
- 	# 	result = cursor.fetchall();
- 	# 	connection.commit();
- 	# 	print len(result);
-
-
  	db_disconnection(connection, cursor);
-
-
-
