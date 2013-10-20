@@ -62,7 +62,7 @@ def db_create_table(connection, cursor, tablename):
 		テーブル名
 	"""
 	tablename = tablename.split(".")[0];
-	sql = "create table %s (  id int(17) NOT NULL AUTO_INCREMENT, comment varchar(255) NOT NULL, command varchar(255) , vpos int(17) NOT NULL, no int(17) NOT NULL, date int(17) NOT NULL,PRIMARY KEY (id));" % (e(tablename));
+	sql = "CREATE TABLE %s ( id int(17) NOT NULL AUTO_INCREMENT, comment varchar(255) NOT NULL, command varchar(255) , vpos int(17) NOT NULL, no int(17) NOT NULL, date int(17) NOT NULL,PRIMARY KEY (id));" % (e(tablename));
 	cursor.execute(sql);
 	connection.commit();
 	return tablename;
@@ -117,13 +117,12 @@ def get_comment_where_nearly_vpos(connection, cursor, tablename, vpos, offset):
 	"""
 	start_vpos = max(0, vpos-offset);
 	end_vpos = vpos + offset;
-	sql = "select * from %s where vpos between '%s' and '%s';" % (e(tablename), start_vpos, end_vpos);
+	sql = "SELECT * FROM %s WHERE vpos between '%s' AND '%s';" % (e(tablename), start_vpos, end_vpos);
 	cursor.execute(sql);
 	result = cursor.fetchall();
 	return result;
 
 if __name__ == "__main__":
-
 
 	mecab = MeCab.Tagger();
 	connection, cursor = db_connection("nico", "root", "admin");	
