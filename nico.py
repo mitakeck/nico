@@ -147,32 +147,36 @@ def get_comment_where_nearly_vpos(connection, cursor, tablename, vpos, offset):
 
 if __name__ == "__main__":
 
-	mecab = MeCab.Tagger();
-	connection, cursor = db_connection("nico", "root", "admin");	
-	result = get_comment_where_nearly_vpos(connection, cursor, "sm19240845", 24100, 5000);
+	# mecab = MeCab.Tagger();
+	# connection, cursor = db_connection("nico", "root", "admin");	
+	# result = get_comment_where_nearly_vpos(connection, cursor, "sm19240845", 24100, 5000);
 
-	word = {};
- 	for comment in result:
-		data = [];
-		data.append(comment[1])
-		node = mecab.parseToNode("\n".join(data))
-		while node:
-			posid = node.posid;
-			surface = node.surface;
-			if posid==10 or posid==11 or posid==12:
-				if not word.has_key(surface):
-					word[surface] = 1;
-				else:
-					word[surface] += 1;
-				
-			node = node.next;
+	# word = {};
+ 	# for comment in result:
+	# 	data = [];
+	# 	data.append(comment[1])
+	# 	node = mecab.parseToNode("\n".join(data))
+	# 	while node:
+	# 		posid = node.posid;
+	# 		surface = node.surface;
+	# 		if posid==10 or posid==11 or posid==12:
+	# 			if not word.has_key(surface):
+	# 				word[surface] = 1;
+	# 			else:
+	# 				word[surface] += 1;
+	# 			
+	# 		node = node.next;
+	# 
+	# for w, c in sorted(word.items(), key=lambda x:x[1]):
+	# 	print w;
+	# 	print c;
+
 	
-	for w, c in sorted(word.items(), key=lambda x:x[1]):
-		print w;
-		print c;
+	# matplotlib.pyplot.plot(word);
+	# matplotlib.pyplot.savefig('word.png');
+        fig = matplotlib.pyplot.figure(figsize=(8,8));
+        ax = fig.add_subplot(111)
+        ax.pie([4, 3, 2, 1])
+        matplotlib.pyplot.savefig("curcle.png")
 
-	
-	matplotlib.pyplot.plot(word);
-	matplotlib.pyplot.savefig('word.png');
-
- 	db_disconnection(connection, cursor);
+ 	# db_disconnection(connection, cursor);
