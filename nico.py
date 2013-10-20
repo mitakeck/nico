@@ -1,6 +1,7 @@
 #--coding:utf8
 
 import json
+import random
 import MySQLdb
 import os
 import MeCab
@@ -167,14 +168,16 @@ if __name__ == "__main__":
 				
 			node = node.next;
 	
-	for w, c in sorted(word.items(), key=lambda x:x[1]):
+	# for w, c in sorted(word.items(), key=lambda x:x[1]):
+	for w, c in word.items():
 		print w;
 		print c;
-
-	
-        fig = matplotlib.pyplot.figure(figsize=(8,8));
-        ax = fig.add_subplot(111)
-        ax.pie(word.values())
-        matplotlib.pyplot.savefig("curcle.png")
+        
+        # labels = [x for x in word.keys()];
+        # fig = matplotlib.pyplot.figure(figsize=(8,8));
+        # ax = fig.add_subplot(111)
+        # ax.pie(word.values(), labels=labels)
+        # ax.set_title(u'words', size=16);
+        # matplotlib.pyplot.savefig(u"curcle.png")
 
  	db_disconnection(connection, cursor);
