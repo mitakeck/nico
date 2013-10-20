@@ -86,11 +86,28 @@ def db_is_exist_table(connection, cursor, tablename):
 	else:
 		return -1;
 
-
 def parse_table_name(string):
-	return e(string.split(".")[0]);
+	""" ファル名からテーブル名に変換するユーティリティ関数
+	args:
+		string:　ファイル名 / ファイルパス
+	return :
+		string テーブル名
+	"""
+	filename = string.split("/");
+ 	filename = filename[len(filename)-1];
+ 	return e(filename.split(".")[0]);
 
 def get_nearly_vpos_comment(connection, cursor, tablename, vpos, offset):
+	""" vpos の前後 offset(ms) のコメントを取得する
+	args:
+		connection:
+		cursor:
+		tablename:	テーブル名
+		vpos:		取得したいコメントの再生時間
+		offset:		前後何(ms)のコメントを取得するか
+	return:
+		コメントデータオブジェクト配列
+	"""
 	start_vpos = max(0, vpos-offset);
 	end_vpos = vpos + offset;
 	sql = "select * from %s where vpos between '%s' and '%s';" % (e(tablename), start_vpos, end_vpos);
@@ -100,29 +117,32 @@ def get_nearly_vpos_comment(connection, cursor, tablename, vpos, offset):
 
 if __name__ == "__main__":
 
-	mecab = MeCab.Tagger();
-	connection, cursor = db_connection("nico", "root", "admin");	
-	result = get_nearly_vpos_comment(connection, cursor, "sm19240845", 24100, 2000);
+	test = "/root/nico/0000/sm1001";
+	print parse_table_name(test);
 
-	word = {};
- 	for comment in result:
-		data = [];
-		data.append(comment[1])
-		node = mecab.parseToNode("\n".join(data))
-		while node:
-			posid = node.posid;
-			surface = node.surface;
-			if posid==10 or posid==11 or posid==12:
-				if not word.has_key(surface):
-					word[surface] = 1;
-				else:
-					word[surface] += 1;
-				
-			node = node.next;
-	
-	for w, c in sorted(word.items(), key=lambda x:x[1]):
-		print w;
-		print c;
+####	mecab = MeCab.Tagger();
+####	connection, cursor = db_connection("nico", "root", "admin");	
+####	result = get_nearly_vpos_comment(connection, cursor, "sm19240845", 24100, 2000);
+####
+####	word = {};
+#### 	for comment in result:
+####		data = [];
+####		data.append(comment[1])
+####		node = mecab.parseToNode("\n".join(data))
+####		while node:
+####			posid = node.posid;
+####			surface = node.surface;
+####			if posid==10 or posid==11 or posid==12:
+####				if not word.has_key(surface):
+####					word[surface] = 1;
+####				else:
+####					word[surface] += 1;
+####				
+####			node = node.next;
+####	
+####	for w, c in sorted(word.items(), key=lambda x:x[1]):
+####		print w;
+####		print c;
 
 #	if db_is_exist_table(connection, cursor, "testtable"):
 #		print "t";
@@ -148,6 +168,6 @@ if __name__ == "__main__":
  	# 	print len(result);
 
 
-	db_disconnection(connection, cursor);
+# 	db_disconnection(connection, cursor);
 
 
