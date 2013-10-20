@@ -86,6 +86,13 @@ def db_is_exist_table(connection, cursor, tablename):
 	else:
 		return -1;
 
+def db_insert_data(connection, cursor, tablename, data):
+	if db_is_exist_table(connection, cursor, tablename):
+ 		query = "INSERT INTO %s (command, comment, no, vpos, date) VALUES ('%s', '%s', '%s', '%s', '%s');" % ( e(tablename), e(data["command"]), e(data["comment"]), data["no"], data["vpos"], data["date"] );
+		cursor.ececute(sql);
+	else:
+		print "table not exists.";
+
 def parse_table_name(string):
 	""" ファル名からテーブル名に変換するユーティリティ関数
 	args:
