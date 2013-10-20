@@ -97,7 +97,7 @@ def parse_table_name(string):
  	filename = filename[len(filename)-1];
  	return e(filename.split(".")[0]);
 
-def get_nearly_vpos_comment(connection, cursor, tablename, vpos, offset):
+def get_comment_where_nearly_vpos(connection, cursor, tablename, vpos, offset):
 	""" vpos の前後 offset(ms) のコメントを取得する
 	args:
 		connection:
@@ -117,32 +117,30 @@ def get_nearly_vpos_comment(connection, cursor, tablename, vpos, offset):
 
 if __name__ == "__main__":
 
-	test = "/root/nico/0000/sm1001";
-	print parse_table_name(test);
 
-####	mecab = MeCab.Tagger();
-####	connection, cursor = db_connection("nico", "root", "admin");	
-####	result = get_nearly_vpos_comment(connection, cursor, "sm19240845", 24100, 2000);
-####
-####	word = {};
-#### 	for comment in result:
-####		data = [];
-####		data.append(comment[1])
-####		node = mecab.parseToNode("\n".join(data))
-####		while node:
-####			posid = node.posid;
-####			surface = node.surface;
-####			if posid==10 or posid==11 or posid==12:
-####				if not word.has_key(surface):
-####					word[surface] = 1;
-####				else:
-####					word[surface] += 1;
-####				
-####			node = node.next;
-####	
-####	for w, c in sorted(word.items(), key=lambda x:x[1]):
-####		print w;
-####		print c;
+	mecab = MeCab.Tagger();
+	connection, cursor = db_connection("nico", "root", "admin");	
+	result = get_comment_where_nearly_vpos(connection, cursor, "sm19240845", 24100, 5000);
+
+	word = {};
+ 	for comment in result:
+		data = [];
+		data.append(comment[1])
+		node = mecab.parseToNode("\n".join(data))
+		while node:
+			posid = node.posid;
+			surface = node.surface;
+			if posid==10 or posid==11 or posid==12:
+				if not word.has_key(surface):
+					word[surface] = 1;
+				else:
+					word[surface] += 1;
+				
+			node = node.next;
+	
+	for w, c in sorted(word.items(), key=lambda x:x[1]):
+		print w;
+		print c;
 
 #	if db_is_exist_table(connection, cursor, "testtable"):
 #		print "t";
@@ -168,6 +166,7 @@ if __name__ == "__main__":
  	# 	print len(result);
 
 
-# 	db_disconnection(connection, cursor);
+ 	db_disconnection(connection, cursor);
+
 
 
