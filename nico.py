@@ -4,6 +4,7 @@ import json
 import random
 import MySQLdb
 import os
+import re
 import MeCab
 import matplotlib
 matplotlib.use('Agg')
@@ -146,38 +147,54 @@ def get_comment_where_nearly_vpos(connection, cursor, tablename, vpos, offset):
 	result = cursor.fetchall();
 	return result;
 
+def get_adjective(comments):
+    word = {};
+    for comment in result:
+    	data = [];
+    	data.append(comment[1])
+    	node = mecab.parseToNode("\n".join(data))
+    	while node:
+    		posid = node.posid;
+    		surface = node.surface;
+    		if posid==10 or posid==11 or posid==12:
+    			if not word.has_key(surface):
+    				word[surface] = 1;
+    			else:
+    				word[surface] += 1;
+    		node = node.next;
+    return word;	
+
+def get_kaomoji(comment):
+    # print get_kaomoji("っyhghyygyggghghgbbbbvbvvvvvンッッッッッっっl(^○^)")
+    # => (^○^)
+    # print get_kaomoji("test")
+    # => ""
+    text          = '[0-9A-Za-zぁ-ヶ一-龠]';
+    non_text      = '[^0-9A-Za-zぁ-ヶ一-龠]';
+    allow_text    = '[ovっつ゜ニノ三二]';
+    hw_kana       = '[ｦ-ﾟ]';
+    open_branket  = '[\(∩꒰（]';
+    close_branket = '[\)∩꒱）]';
+    arround_face  = '(?:' + non_text + '|' + allow_text + ')*';
+    face          = '(?!(?:' + text + '|' + hw_kana + '){3,}).{3,}';
+    m = re.search(arround_face + open_branket + face + close_branket + arround_face, comment)
+    if hasattr(type(m), "group"):
+        return m.group(0)
+    else:
+        return ""
+
 if __name__ == "__main__":
 
 	mecab = MeCab.Tagger();
 	connection, cursor = db_connection("nico", "root", "admin");	
-	result = get_comment_where_nearly_vpos(connection, cursor, "sm19240845", 24100, 5000);
 
-	word = {};
- 	for comment in result:
-		data = [];
-		data.append(comment[1])
-		node = mecab.parseToNode("\n".join(data))
-		while node:
-			posid = node.posid;
-			surface = node.surface;
-			if posid==10 or posid==11 or posid==12:
-				if not word.has_key(surface):
-					word[surface] = 1;
-				else:
-					word[surface] += 1;
-				
-			node = node.next;
-	
-	# for w, c in sorted(word.items(), key=lambda x:x[1]):
-	for w, c in word.items():
-		print w;
-		print c;
-        
-        # labels = [x for x in word.keys()];
-        # fig = matplotlib.pyplot.figure(figsize=(8,8));
-        # ax = fig.add_subplot(111)
-        # ax.pie(word.values(), labels=labels)
-        # ax.set_title(u'words', size=16);
-        # matplotlib.pyplot.savefig(u"curcle.png")
+	result = get_comment_where_nearly_vpos(connection, cursor, "sm19240845", 24100, 5000);
+        word = get_adjective(result);
+    
+        count = sum(word.values());
+        for key,value in  sorted(word.items(), key=lambda x:int(x[1]), reverse=True):
+            print "%s: %2s (%0.2f%%)" %(key, value, 100.0*float(value)/float(count))
 
  	db_disconnection(connection, cursor);
+
+
