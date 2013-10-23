@@ -188,23 +188,28 @@ if __name__ == "__main__":
     mecab = MeCab.Tagger();
     connection, cursor = db_connection("nico", "root", "admin");	
     
-    tablename = "sm9999"
+    tablename = "sm2222"
     cursor.execute("select * from %s;" % (e(tablename)));
     result = cursor.fetchall();
     print len(result)
+    cnt = 1;
     for comment in sorted(result, key=lambda x:x[3]):
         face = get_kaomoji(comment[1])
         if not face == "":
-            print "#----------------------------#"
-            print "%s" %(comment[1])
-            print "%s: %s\n" %(comment[3], face)
-            n = get_comment_where_nearly_vpos(connection, cursor, tablename, comment[3], 200)
-            for com in sorted(n, key=lambda x:x[3]):
-                print "%s: %s" % (com[3], com[1])
-            # word = get_adjective(n);
-            # count = sum(word.values());
-            # for key,value in  sorted(word.items(), key=lambda x:int(x[1]), reverse=True):
-            #     print "%s: %2s (%0.2f%%)" %(key, value, 100.0*float(value)/float(count))
+            if cnt == 4:
+
+                print "#----------------------------#"
+                print "%s" %(comment[1])
+                print "%s: %s\n" %(comment[3], face)
+                n = get_comment_where_nearly_vpos(connection, cursor, tablename, comment[3], 200)
+                for com in sorted(n, key=lambda x:x[3]):
+                    print "%s: %s" % (com[3], com[1])
+                word = get_adjective(n);
+                count = sum(word.values());
+                for key,value in  sorted(word.items(), key=lambda x:int(x[1]), reverse=True):
+                    print "%s: %2s (%0.2f%%)" %(key, value, 100.0*float(value)/float(count))
+            else:
+                cnt += 1
     
     db_disconnection(connection, cursor);
 
