@@ -185,54 +185,18 @@ def get_kaomoji(comment):
 
 if __name__ == "__main__":
 
-    mecab = MeCab.Tagger();
-    connection, cursor = db_connection("nico", "root", "admin");
-    connection2, cursor2 = db_connection("words", "root", "admin");
-    # cursor2.execute("select * from word");
-    # result = cursor2.fetchall();
-    # for word in result:
-    # 	print word[1];
-    # 	print word[2];
+    connection, cursor = db_connection("words", "root", "admin");
+
+    sql = """select * from word where word like "むごい" limit 1;"""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    # for record in result:
+    #     print record[1]
+    #     print record[2]
     
-    tablename = "sm2222"
-    cursor.execute("select * from %s;" % (e(tablename)));
-    result = cursor.fetchall();
-    print len(result)
-    for comment in sorted(result, key=lambda x:x[3]):
-        face = get_kaomoji(comment[1])
-        if not face == "":
-            print "#----------------------------#"
-            print "%s" %(comment[1])
-            # print "%s: %s\n" %(comment[3], face)
-            n = get_comment_where_nearly_vpos(connection, cursor, tablename, comment[3], 200)
-            # for com in sorted(n, key=lambda x:x[3]):
-            #     print "%s: %s" % (com[3], com[1])
-            word = get_adjective(n);
-            count = sum(word.values());
-            valiable_count = 0
-            mixed = []
-            for key,value in  sorted(word.items(), key=lambda x:int(x[1]), reverse=True):
-                sql = """ select * from word where word like "%s" limit 1;
-                    """ %(key)
-                cursor2.execute(sql)
-                v = cursor2.fetchall()
-                # if len(v) == 0:
-                #    print """%s: %2s (%0.2f%%)""" %(key, value, 100.0*float(value)/float(count))
-                # else:
-                #     print """%s(%s): %2s (%0.2f%%)""" %(key, v[0][2], value, 100.0*float(value)/float(count))
-
-                if not len(v) == 0:
-                    mixed.append(v[0][2])
-                    valiable_count += 1
-
-            if valiable_count == 0:
-                print 0.0
-            else:
-                print sum(mixed)/valiable_count
-
-    
-
-
+    print result[0][1]
+    print result[0][2]
 
     db_disconnection(connection, cursor);
-    db_disconnection(connection2, cursor2);
+    
+
